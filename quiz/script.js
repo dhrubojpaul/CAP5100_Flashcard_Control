@@ -175,7 +175,7 @@ Vue.component("quiz", {
             if (this.current.hint){
                 if (this.values.isHinted){
                     if(this.values.isSubmitted){
-                        return "You have submitted."
+                        return "You have submitted. Click 'Next' when you are ready."
                     } else {
                         return "Choose correct answer and submit."
                     }
@@ -202,10 +202,12 @@ Vue.component("quiz", {
 
             if(this.current.hint){
                 for(var i= 0; i<4; i++){
+                    /*
                     if(currentOptions[i].id == this.current.hint && this.values.isHinted){
                         tempColor[i] = hintColor;
                     }
-                    if(currentOptions[i].id == this.values.selected && currentOptions[i].id != this.current.hint){
+                    */
+                    if(currentOptions[i].id == this.values.selected /*&& currentOptions[i].id != this.current.hint*/){
                         tempColor[i] = selectedColor;
                     }
                     if(currentOptions[i].id == this.values.selected && this.values.isSubmitted && this.values.selected != this.current.word.id){
@@ -244,7 +246,7 @@ Vue.component("quiz", {
             var current = {};
             current.qIndex = qIndex;
             current.type = questions[qIndex].t;
-            //current.hint = questions[qIndex].h;
+            current.hint = questions[qIndex].h;
             current.autoSubmittedOption = questions[qIndex].s;
             current.word = findObjectByID(asset, questions[qIndex].q);
             current.options = [];
