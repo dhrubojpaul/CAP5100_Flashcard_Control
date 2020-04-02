@@ -74,7 +74,7 @@ Vue.component("quiz", {
         <v-row justify="center" align="center">
             <v-col cols=12 md=3 sm=6 v-for="(option,optionIndex) in current.options">
             <div align=center>
-                <v-card tile :disabled="(current.hint && !values.isHinted) || values.isSubmitted" @click="clickOnOption(option.id)" 
+                <v-card tile @click="clickOnOption(option.id)" 
                         :color=color[optionIndex] height=120px>
                         <v-card height=100px flat>
                             <v-card tile width=115px class="pa-2" flat>{{current.type == 1 ? option.eng : option.chn}}</v-card>
@@ -244,7 +244,7 @@ Vue.component("quiz", {
             var current = {};
             current.qIndex = qIndex;
             current.type = questions[qIndex].t;
-            current.hint = questions[qIndex].h;
+            //current.hint = questions[qIndex].h;
             current.autoSubmittedOption = questions[qIndex].s;
             current.word = findObjectByID(asset, questions[qIndex].q);
             current.options = [];
@@ -254,7 +254,7 @@ Vue.component("quiz", {
 
             this.values.role = questions[qIndex].h ? 2 : 1;
             if(current.hint){
-                this.startAssistCountdown();
+                //this.startAssistCountdown();
             }
 
             return current;
