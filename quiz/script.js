@@ -106,7 +106,7 @@ Vue.component("quiz", {
                 selected: undefined,
                 role: undefined, //submitter 1 hinter 2
                 isSubmitted: undefined,
-                isHinted: undefined
+                isHinted: true
             },
             asset: [
                 {id:1, chn:"苹果", eng:"apple", pinyin: "píng guǒ", chnaudio: "./assets/apple_chnaudio.mp3", engaudio: "./assets/apple_engaudio.mp3", image: "./assets/apple_photo.jpg"},
@@ -238,7 +238,7 @@ Vue.component("quiz", {
             this.current = this.setCurrent(qIndex,this.questions,this.asset);
         },
         reset: function(){
-            this.values = {selected: undefined, role: undefined, isSubmitted: undefined, isHinted: undefined};
+            this.values = {selected: undefined, role: undefined, isSubmitted: undefined, isHinted: true};
         },
         setCurrent: function(qIndex, questions, asset){
             var current = {};
