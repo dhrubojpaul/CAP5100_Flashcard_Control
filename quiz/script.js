@@ -1,3 +1,23 @@
+function downloadCSV(text){
+    const blob = new Blob([text], {type:"text/plain"});
+    downloadFile(blob, "cap5100h.csv");
+}  
+function downloadFile(blob, filename){
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");   
+    a.href=url;
+    a.download = filename;
+    a.click();
+    a.remove();
+    document.addEventListener("focus",w=>{window.URL.revokeObjectURL(blob)});
+}
+
+
+
+
+
+
+
 var setCountdown = function(component){
     var countupto = new Date().getTime() + component.duration*1000;
     var x = setInterval(function() {
@@ -33,7 +53,6 @@ var findObjectByID = function(asset, id){
     var object = asset.find(function(item){
         return item.id == id;
     });
-    //return JSON.parse(JSON.stringify(object));  
     return object;
 }
 
@@ -57,8 +76,8 @@ Vue.component("quiz", {
             <div align=center>
                 <v-card tile height=110px @click="play('word')" flat>
                     <v-card flat tile v-if="current.type == 2"><img :src="current.word.image" height=60px></img></v-card>
-                    <v-card flat tile class="display-1 font-weight-black" height=60px v-if="current.type==1">{{current.word.chn}}</v-card>
-                    <v-card flat tile class="headline font-weight-medium" height=50px>{{current.type==1 ? current.word.pinyin : current.word.eng}}</v-card>
+                    <v-card flat tile class="display-1 font-weight-black" height=60px v-if="current.type==1"></v-card>
+                    <v-card flat tile class="headline font-weight-medium" height=50px>{{current.type==1 ? current.word.chn : current.word.eng}}</v-card>
                     <audio autoplay id="word" :src="current.type == 1 ? current.word.chnaudio : current.word.engaudio"></audio>
                 </v-card>
             </div>
@@ -74,11 +93,11 @@ Vue.component("quiz", {
         <v-row justify="center" align="center">
             <v-col cols=12 md=3 sm=6 v-for="(option,optionIndex) in current.options">
             <div align=center>
-                <v-card tile @click="clickOnOption(option.id)" 
+                <v-card tile  :disabled="values.isSubmitted" @click="clickOnOption(option.id)" 
                         :color=color[optionIndex] height=120px>
                         <v-card height=100px flat>
                             <v-card tile width=115px class="pa-2" flat>{{current.type == 1 ? option.eng : option.chn}}</v-card>
-                            <v-card tile width=130px class="pa-2" flat v-if="current.type == 2">{{option.pinyin}}</v-card>
+                            <!--<v-card tile width=130px class="pa-2" flat v-if="current.type == 2">{{option.pinyin}}</v-card>-->
                             <v-card tile class="pa-0"  flat v-if="current.type == 1"><img :src="option.image" height=54px></img></v-card>
                             <audio :src="current.type == 1 ? option.engaudio : option.chnaudio" :id="option.id"></audio>
                         </v-card>
@@ -91,12 +110,13 @@ Vue.component("quiz", {
         <v-btn block v-if="values.role==1 && values.selected && !values.isSubmitted && !values.isHinted" @click="assist">Assist</v-btn>
         <v-btn block v-if="values.role==2 && values.selected && !values.isSubmitted && values.isHinted" @click="submit">Submit</v-btn>
         <v-btn block v-if="values.isSubmitted && values.selected && currentIndex<39" @click="next">Next</v-btn>
-        <v-btn block disabled flat v-if="values.isSubmitted && values.selected && currentIndex>=39" >Quiz Completed</v-btn>
+        <v-btn block flat v-if="values.isSubmitted && values.selected && currentIndex>=39" @click="download">Quiz is Complete. Download Data.</v-btn>
     </v-card>
     </v-container>
     `,
     data(){
         return{
+            csv: "sl,word,answer,hintdelay,submitdelay",
             duration:600,
             score: {right:0,wrong:0,total:0},
             countdown: undefined,
@@ -224,6 +244,9 @@ Vue.component("quiz", {
         },
     },
     methods: {
+        download: function(){
+            downloadCSV(this.csv);
+        },
         clickOnOption: function(id){
             this.values.selected = id;
             play(id);
@@ -250,6 +273,12 @@ Vue.component("quiz", {
             current.autoSubmittedOption = questions[qIndex].s;
             current.word = findObjectByID(asset, questions[qIndex].q);
             current.options = [];
+            
+            //logging
+            current.time = {init:undefined,hinted:undefined,submitted:undefined};
+            current.time.init = new Date().getTime();
+            //current.time.hinted = new Date().getTime();
+
             questions[qIndex].o.forEach(function(item,index){
                 current.options.push(findObjectByID(asset, item));
             });
@@ -294,6 +323,12 @@ Vue.component("quiz", {
             if(this.values.selected == this.current.word.id){this.score.right++;}
             else{this.score.wrong++;}
             this.score.total++;
+
+            this.current.time.submitted = new Date().getTime();
+
+            this.csv += "\n" + parseInt(parseInt(this.currentIndex)+parseInt(1)) +","+ this.current.word.eng +","+ findObjectByID(this.asset, this.values.selected).eng 
+                        + ",0"
+                        + "," + parseFloat(parseFloat(this.current.time.submitted)-parseFloat(this.current.time.init));
         },
         next: function(){
             this.currentIndex++;
