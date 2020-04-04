@@ -31,7 +31,7 @@ Vue.component("list", {
                     <v-col cols=12 md=6 sm=6>
                         <v-card class="pa-2" height=100px @click="play(word.id + 'chn')">
                             <p class="font-weight-bold display-1">{{word.chn}}</p>
-                            <p class="font-weight-bold heading">{{word.pinyin}}</p>
+                            <!--<p class="font-weight-bold heading">{{word.pinyin}}</p>-->
                             <audio :src="word.chnaudio" :id="word.id+'chn'"></audio>
                         </v-card>
                     </v-col>
