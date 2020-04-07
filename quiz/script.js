@@ -116,7 +116,7 @@ Vue.component("quiz", {
     `,
     data(){
         return{
-            csv: "sl,word,answer,hintdelay,submitdelay,nextdelay",
+            csv: "sl,word,answer,hintdelay,submitdelay,nextdelay,optionclickcount",
             duration:600,
             score: {right:0,wrong:0,total:0},
             countdown: undefined,
@@ -249,6 +249,7 @@ Vue.component("quiz", {
         },
         clickOnOption: function(id){
             if(!this.values.isSubmitted){
+                this.current.optionClickCount++;
                 this.values.selected = id;
             }
             play(id);
@@ -280,6 +281,7 @@ Vue.component("quiz", {
             current.time = {init:undefined,hinted:undefined,submitted:undefined};
             current.time.init = new Date().getTime();
             //current.time.hinted = new Date().getTime();
+            current.optionClickCount = 0;
 
             questions[qIndex].o.forEach(function(item,index){
                 current.options.push(findObjectByID(asset, item));
@@ -332,7 +334,8 @@ Vue.component("quiz", {
                 this.csv += "\n" + parseInt(parseInt(this.currentIndex)+parseInt(1)) +","+ this.current.word.eng +","+ findObjectByID(this.asset, this.values.selected).eng 
                         + ",0"
                         + "," + parseFloat(parseFloat(this.current.time.submitted)-parseFloat(this.current.time.init))
-                        + ",0";
+                        + ",0"
+                        + "," + this.current.optionClickCount;
             }
             
         },
@@ -342,7 +345,8 @@ Vue.component("quiz", {
                 this.csv += "\n" + parseInt(parseInt(this.currentIndex)+parseInt(1)) +","+ this.current.word.eng +","+ findObjectByID(this.asset, this.values.selected).eng 
                         + ",0"
                         + "," + parseFloat(parseFloat(this.current.time.submitted)-parseFloat(this.current.time.init))
-                        + "," + parseFloat(parseFloat(this.current.time.next)-parseFloat(this.current.time.submitted));
+                        + "," + parseFloat(parseFloat(this.current.time.next)-parseFloat(this.current.time.submitted))
+                        + "," + this.current.optionClickCount;
             }
 
             this.currentIndex++;
