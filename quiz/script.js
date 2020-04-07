@@ -1,6 +1,6 @@
 function downloadCSV(text){
     const blob = new Blob([text], {type:"text/plain"});
-    downloadFile(blob, "cap5100h.csv");
+    downloadFile(blob, "cap5100c.csv");
 }  
 function downloadFile(blob, filename){
     const url = window.URL.createObjectURL(blob);
